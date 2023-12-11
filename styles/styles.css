@@ -249,3 +249,15 @@ main .section {
 main .section.highlight {
   background-color: var(--highlight-background-color);
 }
+
+[data-color="red"] {
+  color: red;
+}
+
+[data-color="blueviolet"] {
+  color: blueviolet;
+}
+
+[data-color="green"] {
+  color: green;
+}

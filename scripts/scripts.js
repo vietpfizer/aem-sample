@@ -132,4 +132,10 @@ async function loadPage() {
   loadDelayed();
 }
 
-loadPage();
+loadPage().then(() => {
+  const btn = document.querySelector('a[title="Click me"]');
+
+  btn.addEventListener('click', () => {
+    console.log(btn.textContent);
+  });
+});
