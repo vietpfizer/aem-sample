@@ -261,3 +261,11 @@ main .section.highlight {
 [data-color="green"] {
   color: green;
 }
+
+[data-background-color="lightblue"] {
+  background-color: lightblue;
+}
+
+[data-background-color="lightgray"] {
+  background-color: lightgray;
+}

@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "lib": [
+      "es2016",
+      "DOM"
+    ],
+    "module": "commonjs",                              
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,                          
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@pom/*": [
+        "pom/*"
+      ],
+      "@core_lib/*": [
+        "core_lib/*"
+      ],
+      "@data/*": [
+        "data/*"
+      ],
+      "@api/*": [
+        "api/*"
+      ],
+      "@models/*": [
+        "models/*"
+      ],
+    }
+  }
+}

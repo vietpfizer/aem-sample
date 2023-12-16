@@ -1,0 +1,9 @@
+{
+  "super_fast":500,
+  "very_fast":1000,
+  "fast":3000,
+  "normal":10000,
+  "slow": 30000,
+  "very_slow":60000,
+  "super_slow":120000
+}

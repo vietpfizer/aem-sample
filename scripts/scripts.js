@@ -11,6 +11,7 @@ import {
   waitForLCP,
   loadBlocks,
   loadCSS,
+  loadScript,
 } from './aem.js';
 
 const LCP_BLOCKS = []; // add your LCP blocks to the list
@@ -133,9 +134,18 @@ async function loadPage() {
 }
 
 loadPage().then(() => {
-  const btn = document.querySelector('a[title="Click me"]');
+  // const btn = document.querySelector('a');
 
+  // btn.addEventListener('click', () => {
+  //   console.log(btn.textContent);
+  // });
+  clickOnce();
+});
+
+function onClick() {
+  const btn = document.querySelector('a');
   btn.addEventListener('click', () => {
     console.log(btn.textContent);
   });
-});
+}
+const clickOnce = onClick();
