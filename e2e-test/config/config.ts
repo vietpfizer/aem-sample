@@ -1,5 +1,6 @@
-//env
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
+
 const browser = "chromium";
 let testFiles = "tests/google_doc.spec.ts";
 import { defineConfig, devices } from "@playwright/test";

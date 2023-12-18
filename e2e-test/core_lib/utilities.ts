@@ -1,11 +1,6 @@
 
 import { CodeGen } from "ajv";
 
-const path = require('path');
-const util = require('util');
-const {google} = require('googleapis');
-const {authenticate} = require('@google-cloud/local-auth');
-const docs = google.docs('v1');
 export default class Utilities {
   // Converts the Object Parameter Data API to a String Parameter Data API
   convertsObjectAPItoStringAPI(object: any) {

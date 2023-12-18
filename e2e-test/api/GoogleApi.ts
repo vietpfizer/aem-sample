@@ -7,6 +7,13 @@ const {google} = require('googleapis');
 const {authenticate} = require('@google-cloud/local-auth');
 const docs = google.docs('v1');
 export default class GoogleApi {
+
+    async getAccessToken(request,data){
+        const response = await request.post('https://oauth2.googleapis.com/token', {
+            data:data
+        });
+        return (await response.json()).access_token;
+    }
     async googeLogin(){
         const auth = await authenticate({
             scopes: 'https://www.googleapis.com/auth/documents',
@@ -37,10 +44,10 @@ export default class GoogleApi {
             version: 'v3',
             auth: oauth2Client
         });
-        return await drive
+        return await drive;
     }
 
-    async getContentGoogleAPIDoc(request:any,documentID:string, accessToken:string) {
+    async getContentGoogleAPIDoc(request:any,accessToken:string,documentID:string, ) {
         const response = await request.get('https://content-docs.googleapis.com/v1/documents/'+documentID+'?suggestionsViewMode=DEFAULT_FOR_CURRENT_ACCESS', {
         headers: {
             'Authorization': "Bearer "+accessToken,
@@ -49,8 +56,8 @@ export default class GoogleApi {
         return await response.json();
     }
 
-    async postContentGoogleAPIDoc(request:any,documentID:string, accessToken:string) {
-        const response = await request.get('https://content-docs.googleapis.com/v1/documents/'+documentID+'?suggestionsViewMode=DEFAULT_FOR_CURRENT_ACCESS', {
+    async postContentGoogleAPIDoc(request:any,accessToken:string,documentID:string) {
+        const response = await request.post('https://content-docs.googleapis.com/v1/documents/'+documentID+'?suggestionsViewMode=DEFAULT_FOR_CURRENT_ACCESS', {
         headers: {
             'Authorization': "Bearer "+accessToken,
         },
