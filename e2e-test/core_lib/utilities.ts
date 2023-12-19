@@ -35,4 +35,9 @@ export default class Utilities {
     }
     return result;
   }
+
+   generateCodeFromGooglDoc(){
+
+  }
+
 }

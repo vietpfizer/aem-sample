@@ -1,6 +1,8 @@
 import { test, expect, type Page } from '@playwright/test';
 import Utilities from '@core_lib/utilities';
+import BasePage from '@pom/BasePage';
 const utilities = new Utilities();
+const base =new BasePage();
 const baseUrl = "http://localhost:8000";
 
 async function createFile(request,fileName,content,folderId="local"){
@@ -41,8 +43,34 @@ test(' verify create and get content google doc', async ({ request,page }) => {
   await deleteFile(request,info.id);
 });
 
+test('Document content object properties', async ({ request,page }) => {
+  const documentId = "1zXrxqpIeiSj5UuVkAx5t_LargapgoGkW3qgoSLDIwzA";
+  const content_document = await getContentGoogleDoc(request,documentId);
+  //console.log('noi dung cua no ne:',content_document);
+  const textRun = content_document.body.content[1].paragraph.elements[0].textRun;
+  const contentDoc = textRun.content;
+  const styleDoc = textRun.textStyle;
+  const googleDocStyle = {
+    "bold":styleDoc.bold,
+    "italic":styleDoc.italic,
+    "underline":styleDoc.underline,
+    "backgroundColor":styleDoc.backgroundColor,
+    "foregroundColor":styleDoc.foregroundColor,
+    "fontSize":styleDoc.fontSize
+  }
+  await page.goto('https://main--aem-sample--vietpfizer.hlx.page/text');
+  const locator = "//u[contains(text(),'Lorem ipsum dolor')]";
+  const textPage = await base.getText(page,locator);
+  const styleList = ["background-color","color","font-weight","text-decoration","background-color","font-size", "font-style"]
+  const style = await base.getStyleElement(page,locator,styleList);
+  console.log(googleDocStyle);
+  console.log(style);
+  await expect(contentDoc).toBe(textPage);
+  
+});
+
 test(' get files folder', async ({ request,page }) => {
-  const folderId = "1cOOAA5ZqTfW4TjICSSM0TxCYcZxTD_iz";
+    const folderId = "1cOOAA5ZqTfW4TjICSSM0TxCYcZxTD_iz";
   //lay thong tin danh sach file trong folder
   const listFiles = await getFiles(request,folderId);
   let fileInfo=new Array();
@@ -76,6 +104,3 @@ test('Use the extracted content with formatting to compare the components on AEM
   //compare
   // so sanh 2 noi dung
 });
-
-
-

@@ -1,6 +1,6 @@
-import time from "@data/timeout_data.json";
+// import time from "@data/timeout_data.json";
 export default class BasePage {
-  timeout = time.normal;
+  timeout = 10000;
   async goTo(page: any, url: string): Promise<void> {
     await page.goto(url);
   }
@@ -215,4 +215,38 @@ export default class BasePage {
     );
     return JSON.parse(await response.body());
   }
+
+  // get style
+  async getStyleElement(
+    page: any,
+    selector: string,
+    css:any,
+    timeout: number = this.timeout
+  ): Promise<any> {
+    const result = new Array();
+    const element = await page.locator(selector).first();
+    await element.waitFor({ timeout: timeout });
+    if(Array.isArray(css)){
+      for(let i = 0 ;i< css.length;i++){
+        const value =  await element.evaluate((ele, style) => {
+          return window.getComputedStyle(ele,null).getPropertyValue(style);
+          }, css[i]);
+        result.push({
+          "css":css[i],
+          "value":value
+        }); 
+      }
+    }
+    else{
+      const value =  await element.evaluate((ele, style) => {
+        return window.getComputedStyle(ele,null).getPropertyValue(style);
+        }, css);
+      result.push({
+        "css":css,
+        "value":value
+      }); 
+    }
+    return result
+  }
+
 }
