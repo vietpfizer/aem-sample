@@ -215,7 +215,16 @@ export default class BasePage {
     );
     return JSON.parse(await response.body());
   }
-
+  // get tag html
+  async getTagHtml(
+    page: any,
+    selector: string,
+    timeout: number = this.timeout
+  ): Promise<void> {
+    const element = await page.locator(selector).first();
+    await element.waitFor({ timeout: timeout });
+    return (await element.evaluate(e => e.tagName)).toLowerCase();
+  }
   // get style
   async getStyleElement(
     page: any,

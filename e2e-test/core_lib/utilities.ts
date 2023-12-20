@@ -1,6 +1,6 @@
 
 import { CodeGen } from "ajv";
-
+import fs from "fs";
 export default class Utilities {
   // Converts the Object Parameter Data API to a String Parameter Data API
   convertsObjectAPItoStringAPI(object: any) {
@@ -36,8 +36,105 @@ export default class Utilities {
     return result;
   }
 
-   generateCodeFromGooglDoc(){
-
+  // convert namedStyleType to tag html
+  convertTagHtml(namedStyleType){
+    let tag='';
+    switch(namedStyleType) {
+      case "HEADING_1":
+        tag = "h1"
+        break;
+      case "HEADING_2":
+        tag = "h2"
+        break;
+      case "HEADING_3":
+        tag = "h3"
+        break;
+      case "HEADING_4":
+        tag = "h4"
+        break;
+      case "HEADING_5":
+        tag = "h5"
+        break;
+      case "HEADING_6":
+        tag = "h6"
+        break;
+      case "NORMAL_TEXT":
+        tag = "p"
+        break;
+    }
+    return tag;
   }
-
+  //convert properties on content
+  convertPropertiesOnContent(textStyle,properties,propertiesValue){
+    let result='';
+    switch(properties) {
+      case "bold":
+        result = "strong"
+        break;
+      case "italic":
+        result = "em"
+        break;
+      case "underline":
+        result = "u"
+        break;
+    }
+    return result;
+  }
+  progressPropertiesOnElement(textStyle){
+    let tag = new Array();
+    let style = new Array();
+    for (var properties in textStyle) {
+      const propertiesValue = textStyle[properties];
+      if(properties=="backgroundColor" || properties =="foregroundColor" ){
+        for (var key in textStyle[properties].color.rgbColor) {
+          style.push(properties+":"+key);
+        }
+      }
+      else if(properties=="fontSize"){
+        style.push(properties+":"+textStyle[properties].magnitude+" "+textStyle[properties].unit);
+      }
+      else{
+        tag.push(this.convertPropertiesOnContent(textStyle,properties,propertiesValue))
+      }
+      
+   }
+   return {
+    tag:tag,
+    style:style
+   };
+  }
+  // 
+  progressElementInBlock(elements){
+    let data= new Array();
+    for(let i=0;i < elements.length;i++){
+      const textRun = elements[i].textRun
+      const content = textRun.content;
+      const textStyle = textRun.textStyle;
+      data.push({
+        content:content.replace("\n",""),
+        textStyle: this.progressPropertiesOnElement(textStyle)
+      })
+    }
+    console.log(data);
+    
+    return data;
+  }
+  
+  // generate code from google doc
+  generateCodeFromGoogleDoc(doc){
+    const result = new Array();
+    const content = doc.body.content;
+    for(let i=0;i<content.length;i++){
+      const contentItem = content[i];
+      const paragraph = contentItem.paragraph;
+      if(paragraph){
+        const elements = this.progressElementInBlock(paragraph.elements);
+        result.push({
+          tag:this.convertTagHtml(paragraph.paragraphStyle.namedStyleType),
+          elements: elements
+        })
+      }
+    }
+    return result;
+  }
 }
