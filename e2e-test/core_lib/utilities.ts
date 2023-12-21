@@ -37,31 +37,41 @@ export default class Utilities {
   }
 
   // convert namedStyleType to tag html
-  convertTagHtml(namedStyleType){
+  convertTagHtml(namedStyleType,indentFirstLine){
+    console.log(namedStyleType);
+    console.log(indentFirstLine);
+    
     let tag='';
-    switch(namedStyleType) {
-      case "HEADING_1":
-        tag = "h1"
-        break;
-      case "HEADING_2":
-        tag = "h2"
-        break;
-      case "HEADING_3":
-        tag = "h3"
-        break;
-      case "HEADING_4":
-        tag = "h4"
-        break;
-      case "HEADING_5":
-        tag = "h5"
-        break;
-      case "HEADING_6":
-        tag = "h6"
-        break;
-      case "NORMAL_TEXT":
-        tag = "p"
-        break;
+    if(indentFirstLine && namedStyleType=="NORMAL_TEXT"){
+      console.log("co");
+      tag = "li";
     }
+    else{
+      switch(namedStyleType) {
+        case "HEADING_1":
+          tag = "h1"
+          break;
+        case "HEADING_2":
+          tag = "h2"
+          break;
+        case "HEADING_3":
+          tag = "h3"
+          break;
+        case "HEADING_4":
+          tag = "h4"
+          break;
+        case "HEADING_5":
+          tag = "h5"
+          break;
+        case "HEADING_6":
+          tag = "h6"
+          break;
+        case "NORMAL_TEXT":
+          tag = "p"
+          break;
+      }
+    }
+    
     return tag;
   }
   //convert properties on content
@@ -77,9 +87,23 @@ export default class Utilities {
       case "underline":
         result = "u"
         break;
+      case "link":
+        result = "a"
+      break;
     }
     return result;
   }
+
+  convertLinkOnContent(properties,propertiesValue){
+    let result='';
+    switch(properties) {
+      case "link":
+        result = "a"
+        break;
+    }
+    return result;
+  }
+
   progressPropertiesOnElement(textStyle){
     let tag = new Array();
     let style = new Array();
@@ -130,7 +154,7 @@ export default class Utilities {
       if(paragraph){
         const elements = this.progressElementInBlock(paragraph.elements);
         result.push({
-          tag:this.convertTagHtml(paragraph.paragraphStyle.namedStyleType),
+          tag:this.convertTagHtml(paragraph.paragraphStyle.namedStyleType,paragraph.paragraphStyle.indentFirstLine),
           elements: elements
         })
       }
