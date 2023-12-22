@@ -1,15 +1,14 @@
 import { test, expect } from '@playwright/test';
-const { chromium } = require("playwright");
 
 test('text page link', async ({ page }) => {
-    await page.goto('https://main--aem-sample--vietpfizer.hlx.page/');
+    await page.goto('/');
   
     // Click the Text Page link.
     await page.getByRole('link', { name: 'Text Page' }).click();
 });
 
 test('headings link', async ({ page }) => {
-    await page.goto('https://main--aem-sample--vietpfizer.hlx.page/');
+    await page.goto('/');
   
     // Click the Headings Page link.
     await page.getByRole('link', { name: 'Headings Page' }).click();
@@ -21,5 +20,4 @@ test('headings link', async ({ page }) => {
     
     // get text of components
     const h1 = await page.locator('//h1[@id="example-heading-1"]').textContent();
-    console.log(h1);
 });

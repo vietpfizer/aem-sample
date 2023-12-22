@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-const browser = "chromium";
-let testFiles = "tests/google_doc.spec.ts";
+const browser = process.env.BROWSER || "chromium";
+let testFiles = process.env.FILE_RUN || "tests/*.spec.ts";
 import { defineConfig, devices } from "@playwright/test";
 import Utilities from "@core_lib/utilities";
 //declare
@@ -87,7 +87,7 @@ export default defineConfig({
   reporter: [["html"], ["list"], ["allure-playwright"]],
   timeout: 5 * 60 * 1000,
   use: {
-    baseURL: "https://main--aem-sample--vietpfizer.hlx.page/",
+    baseURL: "https://main--aem-sample--vietpfizer.hlx.page",
     trace: "on-first-retry",
     screenshot: "on",
     video: "on",

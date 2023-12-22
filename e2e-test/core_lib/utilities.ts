@@ -38,12 +38,8 @@ export default class Utilities {
 
   // convert namedStyleType to tag html
   convertTagHtml(namedStyleType,indentFirstLine){
-    console.log(namedStyleType);
-    console.log(indentFirstLine);
-    
     let tag='';
     if(indentFirstLine && namedStyleType=="NORMAL_TEXT"){
-      console.log("co");
       tag = "li";
     }
     else{
@@ -94,15 +90,6 @@ export default class Utilities {
     return result;
   }
 
-  convertLinkOnContent(properties,propertiesValue){
-    let result='';
-    switch(properties) {
-      case "link":
-        result = "a"
-        break;
-    }
-    return result;
-  }
 
   progressPropertiesOnElement(textStyle){
     let tag = new Array();
@@ -127,6 +114,7 @@ export default class Utilities {
     style:style
    };
   }
+  
   // 
   progressElementInBlock(elements){
     let data= new Array();
@@ -139,8 +127,6 @@ export default class Utilities {
         textStyle: this.progressPropertiesOnElement(textStyle)
       })
     }
-    console.log(data);
-    
     return data;
   }
   
