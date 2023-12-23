@@ -1,15 +1,23 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+const emailGG = process.env.EMAILGG || "";
+const passGG = process.env.PASSGG || "";
+const secretGG = process.env.SECRETGG || "";
 import { test, expect, type Page } from '@playwright/test';
 import Utilities from '@core_lib/utilities';
 import BasePage from '@pom/BasePage';
 import TextPage from '@pom/TextPage';
 import ListPage from '@pom/ListPage';
 import GoogleApi from '@api/GoogleApi';
+import GooglePage from '@pom/GooglePage';
 import googleDocData  from '@data/google_doc_data.json' assert { type: 'json' }; ;
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
 const base =new BasePage();
 const textPage =new TextPage();
 const listPage =new ListPage();
+const googlePage = new GooglePage();
 
 async function checkTagExistInBlock(page,blockLocator,tag) {
   for(let i=0; i< tag.length;i++){
@@ -17,6 +25,11 @@ async function checkTagExistInBlock(page,blockLocator,tag) {
   }
 }
 
+test('Get token ', async ({page}) => {
+  await page.goto("http://localhost:8000/auth/google");
+  await googlePage.enterAccountGoogle(page,emailGG,passGG,secretGG);
+  await googlePage.wait(page,10000);
+});
 
 test('verify get files folder', async ({  }) => {
   const folderId = googleDocData.folderId;
@@ -33,7 +46,6 @@ test('verify get files folder', async ({  }) => {
       }
     }
   }
-  console.log(fileInfo);
 });
 
 test('verify can create and get content google doc', async ({ request,page }) => {

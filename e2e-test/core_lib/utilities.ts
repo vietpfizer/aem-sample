@@ -1,5 +1,5 @@
 
-import { CodeGen } from "ajv";
+import { TOTP } from "otpauth";
 import fs from "fs";
 export default class Utilities {
   // Converts the Object Parameter Data API to a String Parameter Data API
@@ -35,6 +35,16 @@ export default class Utilities {
     }
     return result;
   }
+  // Generate otp token google
+    async generateOTPGoogle(secret: string) {
+      let totp = new TOTP({
+        algorithm: "SHA1",
+        digits: 6,
+        period: 30,
+        secret: secret,
+      });
+      return totp.generate();
+    }
 
   // convert namedStyleType to tag html
   convertTagHtml(namedStyleType,indentFirstLine){
