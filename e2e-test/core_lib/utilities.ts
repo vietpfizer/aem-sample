@@ -1,6 +1,5 @@
 
 import { TOTP } from "otpauth";
-import fs from "fs";
 export default class Utilities {
   // Converts the Object Parameter Data API to a String Parameter Data API
   convertsObjectAPItoStringAPI(object: any) {
@@ -83,19 +82,31 @@ export default class Utilities {
   //convert properties on content
   convertPropertiesOnContent(textStyle,properties,propertiesValue){
     let result='';
-    switch(properties) {
-      case "bold":
-        result = "strong"
+    if(properties == "baselineOffset"){
+      if(propertiesValue =="SUBSCRIPT"){
+        result = "sub"
+      }
+      else if(propertiesValue =="SUPERSCRIPT"){
+        result = "sup"
+      }
+    }
+    else{
+      switch(properties) {
+        case "bold":
+          result = "strong"
+          break;
+        case "italic":
+          result = "em"
+          break;
+        case "underline":
+          result = "u"
+          break;
+        case "link":
+          result = "a"
+        case "strikethrough":
+          result = 'del'
         break;
-      case "italic":
-        result = "em"
-        break;
-      case "underline":
-        result = "u"
-        break;
-      case "link":
-        result = "a"
-      break;
+      }
     }
     return result;
   }
@@ -117,7 +128,6 @@ export default class Utilities {
       else{
         tag.push(this.convertPropertiesOnContent(textStyle,properties,propertiesValue))
       }
-      
    }
    return {
     tag:tag,
@@ -126,16 +136,40 @@ export default class Utilities {
   }
   
   // 
-  progressElementInBlock(elements){
+  progressElementInBlock(type,elements){
     let data= new Array();
-    for(let i=0;i < elements.length;i++){
-      const textRun = elements[i].textRun
-      const content = textRun.content;
-      const textStyle = textRun.textStyle;
-      data.push({
-        content:content.replace("\n",""),
-        textStyle: this.progressPropertiesOnElement(textStyle)
-      })
+    if(type=="paragraph"){
+      for(let i=0;i < elements.length;i++){
+        const textRun = elements[i].textRun
+        const content = textRun.content;
+        const textStyle = textRun.textStyle;
+        data.push({
+          content:content.replace("\n",""),
+          textStyle: this.progressPropertiesOnElement(textStyle)
+        })
+      }
+    }
+    else if(type=="cards"){
+      const child = new Array();
+      for(let i=1;i < elements.length;i++){
+        const childLi = new Array();
+        for(let j=0;j<elements[i].tableCells.length;j++){
+          childLi.push({
+            tab:"div"
+          })
+        }
+        child.push({
+          tab:"li",
+          child:childLi
+        })
+        console.log(childLi);
+      }
+      const card={
+        tab:"ul",
+        child:child
+      }
+
+      data.push(card)
     }
     return data;
   }
@@ -147,14 +181,29 @@ export default class Utilities {
     for(let i=0;i<content.length;i++){
       const contentItem = content[i];
       const paragraph = contentItem.paragraph;
+      const table = contentItem.table;
       if(paragraph){
-        const elements = this.progressElementInBlock(paragraph.elements);
+        const elements = this.progressElementInBlock("paragraph",paragraph.elements);
         result.push({
           tag:this.convertTagHtml(paragraph.paragraphStyle.namedStyleType,paragraph.paragraphStyle.indentFirstLine),
           elements: elements
         })
       }
+      
+      if(table){
+        const tableType =  table.tableRows[0].tableCells[0].content[0].paragraph.elements[0].textRun.content;
+        if(tableType =="Cards\n"){
+          const elements = this.progressElementInBlock("cards",table.tableRows);
+          result.push({
+            tag:'div',
+            elements: elements
+          })
+        }
+        else if(tableType == "Table\n"){
+        }
+      }
     }
     return result;
   }
+
 }

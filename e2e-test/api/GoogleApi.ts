@@ -18,13 +18,35 @@ export default class GoogleApi {
       return oauth2Client;
   }
 
-  async getFilesInFolder(folderId){
+  async getFolderDrive(folderName?){
+    const oauth2Client = await this.oauth2Client();
+    const drive = google.drive({ version: 'v3', auth:oauth2Client });
+    const list:any = await drive.files.list({
+      q: "mimeType='application/vnd.google-apps.folder' and trashed=false",
+      fields:'nextPageToken, files(id, name)',
+      spaces: 'drive',
+    });
+    if(folderName){
+      return await list.data.files.filter(x => x.name === folderName);
+    }
+    else{
+      return await list.data.files;
+    }
+  }
+
+  async getFilesInFolder(folderId,fileName?){
       const oauth2Client = await this.oauth2Client();
       const drive = google.drive({ version: 'v3', auth:oauth2Client });
-      const list = await drive.files.list({
+      const list:any = await drive.files.list({
         q: `parents in '${folderId}'`,
       });
-      return await list.data.files
+      if(fileName){
+        return await list.data.files.filter(x => x.name === fileName);
+      }
+      else{
+        return await list.data.files
+      }
+      
   }
 
   async createFile(folderId,filename,content){

@@ -25,12 +25,10 @@ async function checkTagExistInBlock(page,blockLocator,tag) {
   }
 }
 
-test('Get token ', async ({page}) => {
-  await page.goto("http://localhost:8000/auth/google");
-  await googlePage.enterAccountGoogle(page,emailGG,passGG,secretGG);
-  await googlePage.wait(page,10000);
+test.beforeAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  await googlePage.setAccessToken(page,emailGG,passGG,secretGG);
 });
-
 test('verify get files folder', async ({  }) => {
   const folderId = googleDocData.folderId;
   const files = googleDocData.files;
@@ -83,8 +81,7 @@ test('Use the extracted content with formatting to compare the components on AEM
   //get content gg doc
   const documentId = googleDocData.files[0].id;//text
   const content_document = await googleApi.getContentGGDoc(documentId);
-  const json = content_document;
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(json);
+  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content_document);
   const block1GGdoc = convertGGdoc[0];
   const block2GGdoc = convertGGdoc[1];
   
