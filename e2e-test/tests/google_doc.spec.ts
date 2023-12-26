@@ -11,7 +11,6 @@ import TextPage from '@pom/TextPage';
 import ListPage from '@pom/ListPage';
 import GoogleApi from '@api/GoogleApi';
 import GooglePage from '@pom/GooglePage';
-import googleDocData  from '@data/google_doc_data.json' assert { type: 'json' }; ;
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
 const base =new BasePage();
@@ -24,14 +23,15 @@ async function checkTagExistInBlock(page,blockLocator,tag) {
     expect(await base.isDisplayed(page,blockLocator+"//"+tag[i])).toBe(true);
   }
 }
-
+let stuffFolderInfo, filesStuff;
 test.beforeAll(async ({ browser }) => {
   const page = await browser.newPage();
   await googlePage.setAccessToken(page,emailGG,passGG,secretGG);
+  stuffFolderInfo = await googleApi.getFolderDrive("stuff");
+  filesStuff = await googleApi.getFilesInFolder(stuffFolderInfo[0]["id"]);
 });
 test('verify get files folder', async ({  }) => {
-  const folderId = googleDocData.folderId;
-  const files = googleDocData.files;
+  const folderId = (await googleApi.getFolderDrive("BlockCollection"))[0]["id"];
   //lay thong tin danh sach file trong folder
   const listFiles:any = await googleApi.getFilesInFolder(folderId);
   let fileInfo=new Array();
@@ -47,7 +47,7 @@ test('verify get files folder', async ({  }) => {
 });
 
 test('verify can create and get content google doc', async ({ request,page }) => {
-  const folderId =   googleDocData.folderIdUpload;
+  const folderId = await googleApi.getFolderDrive("upload");
   const fileName =  utilities.generateRandomString(4);
   const contentTest =  utilities.generateRandomString(10);
   const info = await googleApi.createFile(folderId,fileName,contentTest);
@@ -57,7 +57,7 @@ test('verify can create and get content google doc', async ({ request,page }) =>
 });
 
 test('document content object properties', async ({ page }) => {
-  const documentId = googleDocData.files[0].id;
+  const documentId = (filesStuff.filter(x => x.name === "text"))[0]["id"];
   const content_document:any = await googleApi.getContentGGDoc(documentId); 
   const textRun = content_document.body.content[1].paragraph.elements[0].textRun;
   const contentDoc = textRun.content;
@@ -79,7 +79,7 @@ test('document content object properties', async ({ page }) => {
 
 test('Use the extracted content with formatting to compare the components on AEM rendered web page', async ({ page }) => {
   //get content gg doc
-  const documentId = googleDocData.files[0].id;//text
+  const documentId = (filesStuff.filter(x => x.name === "text"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
   const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content_document);
   const block1GGdoc = convertGGdoc[0];
@@ -106,7 +106,7 @@ test('Use the extracted content with formatting to compare the components on AEM
 
 test('Verify the list formats of content in google doc should be respond the components on AEM rendered web page', async ({ page }) => {
   //get content google doc as list
-  const documentId =  googleDocData.files[1].id;
+  const documentId = (filesStuff.filter(x => x.name === "list"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
   const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content_document);
   const block1GGdoc = convertGGdoc[0];

@@ -46,10 +46,13 @@ export default class Utilities {
     }
 
   // convert namedStyleType to tag html
-  convertTagHtml(namedStyleType,indentFirstLine){
+  convertTagHtml(namedStyleType,indentFirstLine,elements){
     let tag='';
     if(indentFirstLine && namedStyleType=="NORMAL_TEXT"){
       tag = "li";
+    }
+    else if(elements[0].inlineObjectElement && namedStyleType=="NORMAL_TEXT"){
+      tag = "picture";
     }
     else{
       switch(namedStyleType) {
@@ -137,41 +140,110 @@ export default class Utilities {
   
   // 
   progressElementInBlock(type,elements){
-    let data= new Array();
     if(type=="paragraph"){
+      let data= new Array();
       for(let i=0;i < elements.length;i++){
         const textRun = elements[i].textRun
-        const content = textRun.content;
-        const textStyle = textRun.textStyle;
-        data.push({
-          content:content.replace("\n",""),
-          textStyle: this.progressPropertiesOnElement(textStyle)
-        })
+        if(textRun){
+          const content = textRun.content;
+          const textStyle = textRun.textStyle;
+          data.push({
+            content:content.replace("\n",""),
+            textStyle: this.progressPropertiesOnElement(textStyle)
+          })
+        }
+        else{
+          const inlineObjectElement = elements[i].inlineObjectElement;
+          const inlineObjectId = inlineObjectElement.inlineObjectId;
+          const textStyle = inlineObjectId.textStyle;
+          data.push({
+            inlineObjectId:inlineObjectElement.inlineObjectId ,
+            textStyle: this.progressPropertiesOnElement(textStyle)
+          })
+        }
+        
       }
+      return data;
     }
     else if(type=="cards"){
       const child = new Array();
       for(let i=1;i < elements.length;i++){
-        const childLi = new Array();
+          const childLi = new Array();
+          for(let j=0;j<elements[i].tableCells.length;j++){
+              const contentDiv =new Array();
+              for(let h=0;h<elements[i].tableCells[j].content.length;h++){
+              const paragraph = elements[i].tableCells[j].content[h].paragraph;
+              const elementsDiv = this.progressElementInBlock("paragraph",paragraph.elements);
+              const namedStyleType = paragraph.paragraphStyle.namedStyleType;
+              const indentFirstLine = paragraph.paragraphStyle.indentFirstLine;
+              contentDiv.push({
+                  tag:this.convertTagHtml(namedStyleType,indentFirstLine,paragraph.elements),
+                  elements:elementsDiv
+              });
+              }
+              childLi.push({
+                tag:"div",
+                child:contentDiv
+              })
+              
+          }
+          child.push({
+              tag:"li",
+              child:childLi
+          })
+      }
+      return {
+          tag:"ul",
+          child:child
+      }
+    }
+    else if(type=="table"){
+      const childHead = new Array();
+      const childBody = new Array();
+      for(let i=1;i < elements.length;i++){
+        const childTr = new Array();
         for(let j=0;j<elements[i].tableCells.length;j++){
-          childLi.push({
-            tab:"div"
+          const contentDiv =new Array();
+          for(let h=0;h<elements[i].tableCells[j].content.length;h++){
+          const paragraph = elements[i].tableCells[j].content[h].paragraph;
+          const elementsDiv = this.progressElementInBlock("paragraph",paragraph.elements);
+          const namedStyleType = paragraph.paragraphStyle.namedStyleType;
+          const indentFirstLine = paragraph.paragraphStyle.indentFirstLine;
+          contentDiv.push({
+              tag:this.convertTagHtml(namedStyleType,indentFirstLine,paragraph.elements),
+              elements:elementsDiv
+          });
+          }
+          childTr.push({
+            tag:"td",
+            child:contentDiv
+          }) 
+        }
+        if(i==1){
+          childHead.push({
+            tag:"tr",
+            child:childTr
           })
         }
-        child.push({
-          tab:"li",
-          child:childLi
-        })
-        console.log(childLi);
+        else{
+          childBody.push({
+            tag:"tr",
+            child:childTr
+          })
+        }
+        
       }
-      const card={
-        tab:"ul",
-        child:child
+      return {
+          thead:{
+            tag:"thead",
+            child:childHead
+          },
+          tbody:{
+            tag:"tbody",
+            child:childBody
+          }
       }
-
-      data.push(card)
     }
-    return data;
   }
   
   // generate code from google doc
@@ -184,12 +256,14 @@ export default class Utilities {
       const table = contentItem.table;
       if(paragraph){
         const elements = this.progressElementInBlock("paragraph",paragraph.elements);
+        const namedStyleType = paragraph.paragraphStyle.namedStyleType;
+        const indentFirstLine = paragraph.paragraphStyle.indentFirstLine;
         result.push({
-          tag:this.convertTagHtml(paragraph.paragraphStyle.namedStyleType,paragraph.paragraphStyle.indentFirstLine),
+          tag:this.convertTagHtml(namedStyleType,indentFirstLine,paragraph.elements),
           elements: elements
         })
       }
-      
+
       if(table){
         const tableType =  table.tableRows[0].tableCells[0].content[0].paragraph.elements[0].textRun.content;
         if(tableType =="Cards\n"){
@@ -199,11 +273,15 @@ export default class Utilities {
             elements: elements
           })
         }
-        else if(tableType == "Table\n"){
+        else if(tableType == "Table\n" || tableType == "Table (striped)\n" || tableType == "Table (bordered)\n" || tableType=="Table (striped, bordered)"){
+          const elements = this.progressElementInBlock("table",table.tableRows);
+          result.push({
+            tag:'table',
+            elements: elements
+          })
         }
       }
     }
     return result;
   }
-
 }

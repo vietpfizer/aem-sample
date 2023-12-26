@@ -99,7 +99,6 @@ export default class BasePage {
     timeout: number = this.timeout
   ): Promise<number> {
     const element = await page.locator(selector);
-    await element.waitFor({ timeout: timeout });
     return await element.count({ timeout: timeout });
   }
 
