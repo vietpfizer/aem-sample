@@ -22,7 +22,15 @@ export default class GeneratedCode {
         const namedStyleType = paragraph.paragraphStyle.namedStyleType;
         const indentFirstLine = paragraph.paragraphStyle.indentFirstLine;
         const textRun =  paragraph.elements[0].textRun;
-        if(textRun && textRun.content!= "\n"){
+        if(textRun){
+          if(textRun.content!= "\n"){
+            result.push({
+              tag:tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements),
+              elements: textTag.convertToText(paragraph.elements)
+            })
+          }
+        }
+        else{
           result.push({
             tag:tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements),
             elements: textTag.convertToText(paragraph.elements)

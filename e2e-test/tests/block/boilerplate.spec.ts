@@ -43,8 +43,9 @@ test('text', async ({ page }) => {
     const fileId = (filesBoilerlate.filter(x => x.name === "text"))[0]["id"];
     const content = await googleApi.getContentGGDoc(fileId);
     const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+
     const block1GGdoc = convertGGdoc[0];
-    const block2GGdoc = convertGGdoc[2];
+    const block2GGdoc = convertGGdoc[1];
 
     await page.goto("/Block/boilerplate/text");
     const blockTag1 =  await base.getTagHtml(page,textPage.block1);
@@ -105,8 +106,8 @@ test('images', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "images"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-
   const pictureGGdoc = convertGGdoc.filter(x=>x.tag=="picture");
+  
   const picture1GGdoc = pictureGGdoc[0];
   const picture2GGdoc = pictureGGdoc[1];
   const picture3GGdoc = pictureGGdoc[2];
@@ -137,17 +138,18 @@ test('sections', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "sections"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  
   //section 1
   const titleSection1GGdoc = convertGGdoc[0];
   const contentsection1GGdoc = convertGGdoc[1];
 
   //section 2
-  const titleSection2GGdoc = convertGGdoc[2];
-  const contentsection2GGdoc = convertGGdoc[3];
+  const titleSection2GGdoc = convertGGdoc[3];
+  const contentsection2GGdoc = convertGGdoc[4];
 
   //section 3
-  const titleSection3GGdoc = convertGGdoc[5];
-  const contentsection3GGdoc = convertGGdoc[6];
+  const titleSection3GGdoc = convertGGdoc[6];
+  const contentsection3GGdoc = convertGGdoc[7];
 
   await page.goto("/Block/boilerplate/sections");
   // section page 1
