@@ -6,13 +6,17 @@ const passGG = process.env.PASSGG || "";
 const secretGG = process.env.SECRETGG || "";
 import { test, expect, type Page } from '@playwright/test';
 import Utilities from '@core_lib/utilities';
+import GeneratedCode from "@core_lib/generatedCode";
 import BasePage from '@pom/BasePage';
 import GoogleApi from '@api/GoogleApi';
 import GooglePage from '@pom/GooglePage';
 import TablePage from "@pom/block/blockCollection/TablePage";
+import EmbedPage from "@pom/block/blockCollection/EmbedPage";
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
+const generateCode = new GeneratedCode();
 const tablePage = new TablePage();
+const embedPage = new EmbedPage();
 const base =new BasePage();
 const googlePage = new GooglePage();
 
@@ -27,7 +31,8 @@ test.beforeAll(async ({ browser }) => {
 test('table', async ({ page }) => {
     const fileId = (filesBoilerlate.filter(x => x.name === "table"))[0]["id"];
     const content:any = await googleApi.getContentGGDoc(fileId);
-    const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+    const convertGGdoc = await generateCode.generateCodeFromGoogleDoc(content);
+    
    
     const tableGGdoc = convertGGdoc.filter(x=>x.tag=="table");
     const table1GGdoc = tableGGdoc[0];
@@ -82,11 +87,11 @@ test('table', async ({ page }) => {
     expect(countTrTBody3).toBe(elementsTable3doc.tbody.child.length);
 
     // block 4
-    const blockTagTable4 =  await base.getTagHtml(page,tablePage.block3);
-    const blockThead4 =  await base.getTagHtml(page,tablePage.block3+"/thead");
-    const countTrThead4 = await base.count(page,tablePage.block3+"/thead/tr");
-    const blockTbody4 =  await base.getTagHtml(page,tablePage.block3+"/tbody");
-    const countTrTBody4 =  await base.count(page,tablePage.block3+"/tbody/tr");
+    const blockTagTable4 =  await base.getTagHtml(page,tablePage.block4);
+    const blockThead4 =  await base.getTagHtml(page,tablePage.block4+"/thead");
+    const countTrThead4 = await base.count(page,tablePage.block4+"/thead/tr");
+    const blockTbody4 =  await base.getTagHtml(page,tablePage.block4+"/tbody");
+    const countTrTBody4 =  await base.count(page,tablePage.block4+"/tbody/tr");
     // Compare 4
     expect(blockTagTable4).toBe(table4GGdoc.tag);
     expect(blockThead4).toBe(elementsTable4doc.thead.tag);
@@ -97,4 +102,38 @@ test('table', async ({ page }) => {
 });
 
 
+test('embed', async ({ page }) => {
+    const fileId = (filesBoilerlate.filter(x => x.name === "embed"))[0]["id"];
+    const content:any = await googleApi.getContentGGDoc(fileId);
+    const convertGGdoc = await generateCode.generateCodeFromGoogleDoc(content);
+    const embedGGdoc = convertGGdoc.filter(x=>x.tag=="div");
+    const embed1GGdoc = embedGGdoc[0];
+    const embed1GGElementdoc = embed1GGdoc.elements[0];
 
+    const embed2GGdoc = embedGGdoc[1];
+    const embed2GGElementdoc = embed2GGdoc.elements[0];
+
+    const embed3GGdoc = embedGGdoc[2];
+    const embed3GGElementdoc = embed3GGdoc.elements[0];
+
+    await page.goto("/Block/blockcollection/embed");
+    //block 1
+    const blockTagEmbed1 =  await base.getTagHtml(page,embedPage.block1);
+    const blockPicture1 =  await base.getTagHtml(page,embedPage.block1+"//picture");
+    //Compare 1
+    expect(blockTagEmbed1).toBe(embed1GGdoc.tag);
+    expect(blockPicture1).toBe(embed1GGElementdoc.tag);
+    //block 2
+    const blockTagEmbed2 =  await base.getTagHtml(page,embedPage.block2);
+    const blockPicture2 =  await base.getTagHtml(page,embedPage.block2+"//picture");
+    //Compare 2
+    expect(blockTagEmbed2).toBe(embed2GGdoc.tag);
+    expect(blockPicture2).toBe(embed2GGElementdoc.tag);
+    //block 3
+    const blockTagEmbed3 =  await base.getTagHtml(page,embedPage.block3);
+    const blockPicture3 =  await base.getTagHtml(page,embedPage.block3+"//picture");
+    //Compare 3
+    expect(blockTagEmbed3).toBe(embed3GGdoc.tag);
+    expect(blockPicture3).toBe(embed3GGElementdoc.tag);
+
+});

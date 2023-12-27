@@ -6,20 +6,24 @@ const passGG = process.env.PASSGG || "";
 const secretGG = process.env.SECRETGG || "";
 import { test, expect, type Page } from '@playwright/test';
 import Utilities from '@core_lib/utilities';
+import GeneratedCode from "@core_lib/generatedCode";
 import BasePage from '@pom/BasePage';
 import TextPage from '@pom/block/boilerplate/TextPage';
 import CardsPage from '@pom/block/boilerplate/CardsPage';
 import ListPage from '@pom/ListPage';
 import PicturePage from "@pom/block/boilerplate/PicturePage";
+import SectionPage from "@pom/block/blockCollection/SectionPage";
 import GoogleApi from '@api/GoogleApi';
 import GooglePage from '@pom/GooglePage';
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
+const generatedCode = new GeneratedCode();
 const base =new BasePage();
 const cardsPage = new CardsPage();
 const textPage = new TextPage();
 const listPage =new ListPage();
 const picturePage = new PicturePage();
+const sectionPage = new SectionPage();
 const googlePage = new GooglePage();
 
 async function checkTagExistInBlock(page,blockLocator,tag) {
@@ -38,7 +42,7 @@ test.beforeAll(async ({ browser }) => {
 test('text', async ({ page }) => {
     const fileId = (filesBoilerlate.filter(x => x.name === "text"))[0]["id"];
     const content = await googleApi.getContentGGDoc(fileId);
-    const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+    const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
     const block1GGdoc = convertGGdoc[0];
     const block2GGdoc = convertGGdoc[2];
 
@@ -69,7 +73,7 @@ test('text', async ({ page }) => {
 test('cards', async ({ page }) => {
     const fileId = (filesBoilerlate.filter(x => x.name === "cards"))[0]["id"];
     const content:any = await googleApi.getContentGGDoc(fileId);
-    const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+    const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
 
     const cardGGdoc = convertGGdoc.filter(x=>x.tag=="div");
     const card1GGdoc = cardGGdoc[0];
@@ -100,7 +104,7 @@ test('cards', async ({ page }) => {
 test('images', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "images"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
 
   const pictureGGdoc = convertGGdoc.filter(x=>x.tag=="picture");
   const picture1GGdoc = pictureGGdoc[0];
@@ -120,17 +124,72 @@ test('images', async ({ page }) => {
 test('code', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "code"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
 });
 
 test('columns', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "columns"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
 });
+
+test('sections', async ({ page }) => {
+  const fileId = (filesBoilerlate.filter(x => x.name === "sections"))[0]["id"];
+  const content:any = await googleApi.getContentGGDoc(fileId);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  //section 1
+  const titleSection1GGdoc = convertGGdoc[0];
+  const contentsection1GGdoc = convertGGdoc[1];
+
+  //section 2
+  const titleSection2GGdoc = convertGGdoc[2];
+  const contentsection2GGdoc = convertGGdoc[3];
+
+  //section 3
+  const titleSection3GGdoc = convertGGdoc[5];
+  const contentsection3GGdoc = convertGGdoc[6];
+
+  await page.goto("/Block/boilerplate/sections");
+  // section page 1
+  const blockTitleSectionTag1 =  await base.getTagHtml(page,sectionPage.block1+"//h2[1]");
+  const blockTitleSectionText1 =  await base.getText(page,sectionPage.block1+"//h2[1]");
+  const blockContentSectionTag1 =  await base.getTagHtml(page,sectionPage.block1+"//p[1]");
+  const blockContentSectionText1 =  await base.getText(page,sectionPage.block1+"//p[1]");
+  // Compare 1
+  expect(blockTitleSectionTag1).toBe(titleSection1GGdoc.tag);
+  expect(blockTitleSectionText1).toBe(titleSection1GGdoc.elements[0].content);
+  expect(blockContentSectionTag1).toBe(contentsection1GGdoc.tag);
+  expect(blockContentSectionText1).toBe(contentsection1GGdoc.elements[0].content);
+  
+  // section page 2
+  const blockTitleSectionTag2 =  await base.getTagHtml(page,sectionPage.block2+"//h2[1]");
+  const blockTitleSectionText2 =  await base.getText(page,sectionPage.block2+"//h2[1]");
+  const blockContentSectionTag2 =  await base.getTagHtml(page,sectionPage.block2+"//p[1]");
+  const blockContentSectionText2 =  await base.getText(page,sectionPage.block2+"//p[1]");
+  // Compare 2
+  expect(blockTitleSectionTag2).toBe(titleSection2GGdoc.tag);
+  expect(blockTitleSectionText2).toBe(titleSection2GGdoc.elements[0].content);
+  expect(blockContentSectionTag2).toBe(contentsection2GGdoc.tag);
+  expect(blockContentSectionText2).toBe(contentsection2GGdoc.elements[0].content);
+
+  // section page 3
+  const blockTitleSectionTag3 =  await base.getTagHtml(page,sectionPage.block3+"//h2[1]");
+  const blockTitleSectionText3 =  await base.getText(page,sectionPage.block3+"//h2[1]");
+  const blockContentSectionTag3 =  await base.getTagHtml(page,sectionPage.block3+"//p[1]");
+  const blockContentSectionText3 =  await base.getText(page,sectionPage.block3+"//p[1]");
+
+  // Compare 2
+  expect(blockTitleSectionTag3).toBe(titleSection3GGdoc.tag);
+  expect(blockTitleSectionText3).toBe(titleSection3GGdoc.elements[0].content);
+  expect(blockContentSectionTag3).toBe(contentsection3GGdoc.tag);
+  expect(blockContentSectionText3).toBe(contentsection3GGdoc.elements[0].content);
+
+});
+
 // test('headings', async ({ page }) => {
 
 // });
+
 // test('hero', async ({ page }) => {
 
 // });
@@ -152,9 +211,7 @@ test('columns', async ({ page }) => {
 
 // });
 
-// test('sections', async ({ page }) => {
 
-// });
 
 // test('setion-metadata', async ({ page }) => {
 

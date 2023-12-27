@@ -6,6 +6,7 @@ const passGG = process.env.PASSGG || "";
 const secretGG = process.env.SECRETGG || "";
 import { test, expect, type Page } from '@playwright/test';
 import Utilities from '@core_lib/utilities';
+import GeneratedCode from "@core_lib/generatedCode";
 import BasePage from '@pom/BasePage';
 import TextPage from '@pom/TextPage';
 import ListPage from '@pom/ListPage';
@@ -13,6 +14,7 @@ import GoogleApi from '@api/GoogleApi';
 import GooglePage from '@pom/GooglePage';
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
+const generatedCode = new GeneratedCode();
 const base =new BasePage();
 const textPage =new TextPage();
 const listPage =new ListPage();
@@ -81,7 +83,7 @@ test('Use the extracted content with formatting to compare the components on AEM
   //get content gg doc
   const documentId = (filesStuff.filter(x => x.name === "text"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content_document);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content_document);
   const block1GGdoc = convertGGdoc[0];
   const block2GGdoc = convertGGdoc[1];
   
@@ -108,7 +110,7 @@ test('Verify the list formats of content in google doc should be respond the com
   //get content google doc as list
   const documentId = (filesStuff.filter(x => x.name === "list"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
-  const convertGGdoc = await utilities.generateCodeFromGoogleDoc(content_document);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content_document);
   const block1GGdoc = convertGGdoc[0];
   const block2GGdoc = convertGGdoc[1];
   await page.goto('/list');
