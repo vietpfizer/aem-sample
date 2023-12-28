@@ -3,9 +3,9 @@ import Tag from "./Tag";
 import TextTag from "./TextTag";
 const tag = new Tag();
 const textTag = new TextTag();
-export default class CardTag {
+export default class ColumnTag {
     // convert namedStyleType to tag html
-    convertToCards(tableRows){
+    convertToColumn(tableRows){
         const child = new Array();
         for(let i=1;i < tableRows.length;i++){
             const childLi = new Array();
@@ -23,19 +23,16 @@ export default class CardTag {
                 }
                 childLi.push({
                   tag:"div",
-                  child:contentDiv
+                  childCell:contentDiv
                 })
                 
             }
             child.push({
-                tag:"li",
-                child:childLi
+                tag:"div",
+                cell:childLi
             })
         }
-        return {
-            tag:"ul",
-            child:child
-        }
+        return child
     }
   }
   

@@ -1,6 +1,6 @@
 
 import Tag from "./Tag";
-import TextTag from "./TextTage";
+import TextTag from "./TextTag";
 const tag = new Tag();
 const textTag = new TextTag();
 export default class TableTag {

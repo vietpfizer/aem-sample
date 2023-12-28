@@ -1,6 +1,6 @@
 
 import Tag from "./Tag";
-import TextTag from "./TextTage";
+import TextTag from "./TextTag";
 const textTag = new TextTag(); 
 const tag = new Tag();
 export default class EmbedTag {
