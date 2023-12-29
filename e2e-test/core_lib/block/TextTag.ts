@@ -74,29 +74,29 @@ export default class Tag {
 
   // convert namedStyleType to tag html
   convertToText(elements){
-      let data= new Array();
-      for(let i=0;i < elements.length;i++){
-        const textRun = elements[i].textRun
-        if(textRun){
-          const content = textRun.content;
-          const textStyle = textRun.textStyle;
+    let data= new Array();
+    for(let i=0;i < elements.length;i++){
+      const textRun = elements[i].textRun
+      if(textRun){
+        const content = textRun.content;
+        const textStyle = textRun.textStyle;
+        data.push({
+          content:content.replace("\n",""),
+          textStyle: this.progressPropertiesOnElement(textStyle)
+        })
+      }
+      else{
+        const inlineObjectElement = elements[i].inlineObjectElement;
+        if(inlineObjectElement){
+          const inlineObjectId = inlineObjectElement.inlineObjectId;
+          const textStyle = inlineObjectId.textStyle;
           data.push({
-            content:content.replace("\n",""),
+            inlineObjectId:inlineObjectElement.inlineObjectId ,
             textStyle: this.progressPropertiesOnElement(textStyle)
           })
         }
-        else{
-          const inlineObjectElement = elements[i].inlineObjectElement;
-          if(inlineObjectElement){
-            const inlineObjectId = inlineObjectElement.inlineObjectId;
-            const textStyle = inlineObjectId.textStyle;
-            data.push({
-              inlineObjectId:inlineObjectElement.inlineObjectId ,
-              textStyle: this.progressPropertiesOnElement(textStyle)
-            })
-          }
-        }
       }
-      return data;
+    }
+    return data;
   }
 }

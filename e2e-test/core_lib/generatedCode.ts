@@ -26,19 +26,27 @@ export default class GeneratedCode {
         const namedStyleType = paragraph.paragraphStyle.namedStyleType;
         const indentFirstLine = paragraph.paragraphStyle.indentFirstLine;
         const textRun =  paragraph.elements[0].textRun;
+        const bullet = paragraph.bullet;
+        let _tag,_elements;
         if(textRun){
           if(textRun.content!= "\n"){
-            result.push({
-              tag:tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements),
-              elements: textTag.convertToText(paragraph.elements)
-            })
+            _tag = tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements);
+            _elements = textTag.convertToText(paragraph.elements);
           }
         }
         else{
-          result.push({
-            tag:tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements),
-            elements: textTag.convertToText(paragraph.elements)
-          })
+          _tag = tag.convertToTag(namedStyleType,indentFirstLine,paragraph.elements);
+          _elements = textTag.convertToText(paragraph.elements);
+        }
+        const arr ={
+          tag: _tag,
+          elements: _elements
+        }
+        if(bullet){
+          arr["bullet"]=bullet
+        }
+        if(arr.tag){
+          result.push(arr)
         }
       }
 
@@ -80,18 +88,48 @@ export default class GeneratedCode {
   
     return this.summaryTag(result);
   }
-
+  
   // summary tag
-  summaryTag(convertDoc){
+  summaryTag(convertDoc:any){
     let result = new Array();
     let content="";
+    let listLi = new Array();
+    let subListLi =new Array();
+    let listIdTemp="";
     let index = 0;
+    let indexChild = 0;
     for(let i=0;i< convertDoc.length ;i++){
       if(convertDoc[i]["tag"] == "p" && convertDoc[i]["elements"][0]["textStyle"]["tag"][0] == "code"){
         content += (convertDoc[i]["elements"][0]["content"]).replace("\u000b","\n") +"\n";
         result[index] = { tag:'pre',elements:[{ content: content, textStyle: { tag: [ 'code' ], style: [] } }] }
       }
+      else if(convertDoc[i]["tag"] == "li"){
+        const nestingLevel = convertDoc[i]["bullet"]["nestingLevel"];
+        if(nestingLevel){
+          const embedGGdoc = convertDoc.filter(x=>x.bullet.listId==listIdTemp && x.bullet.nestingLevel==nestingLevel);
+          listLi[indexChild-1]["child"] = { tag:'ul',li:embedGGdoc};
+        }
+        else{
+          if(listIdTemp==convertDoc[i]["bullet"]["listId"]){
+            listLi[indexChild]=convertDoc[i];
+            indexChild ++;
+          }
+          else{
+            listLi = new Array();
+            indexChild = 0;
+            if(listIdTemp!=""){
+              index ++;
+            }
+            listIdTemp = convertDoc[i]["bullet"]["listId"];
+            listLi[indexChild]=convertDoc[i];
+            indexChild ++;
+          }
+        }
+        result[index] = { tag:'ul',li:listLi}
+        
+      }
       else{
+        content="";
         result[index] = convertDoc[i];
         index ++;
       }

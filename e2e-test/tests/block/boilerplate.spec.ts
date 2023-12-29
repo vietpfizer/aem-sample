@@ -19,6 +19,7 @@ import MetaDataPage from "@pom/block/boilerplate/MetaDataPage";
 import HeadingsPage from "@pom/block/boilerplate/HeadingPage";
 import GoogleApi from '@api/GoogleApi';
 import GooglePage from '@pom/GooglePage';
+import ListBlockPage from '@pom/block/boilerplate/ListPage'
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
 const generatedCode = new GeneratedCode();
@@ -31,6 +32,7 @@ const sectionPage = new SectionPage();
 const codePage = new CodePage();
 const metaDataPage = new MetaDataPage();
 const buttonPage = new ButtonPage();
+const listBlockPage = new ListBlockPage();
 const headingPage = new HeadingsPage();
 const googlePage = new GooglePage();
 
@@ -340,19 +342,51 @@ test('headings', async ({ page }) => {
 
 });
 
+test('list', async ({ page }) => {
+  const fileId = (filesBoilerlate.filter(x => x.name === "list"))[0]["id"];
+  const content:any = await googleApi.getContentGGDoc(fileId);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  const block1ListGGdoc = convertGGdoc[0];
+  const block2ListGGdoc = convertGGdoc[1];
+
+  await page.goto("/Block/Boilerplate/list");
+  const block1Tag = await base.getTagHtml(page,listBlockPage.block1);
+  const countLiChildBlock1 = await base.count(page,listBlockPage.block1+"/li/ul/li");
+  const countLiParentBlock1 = (await base.count(page,listBlockPage.block1+"/li")) - countLiChildBlock1;
+
+  const block2Tag = await base.getTagHtml(page,listBlockPage.block2);
+  const countLiChildBlock2 = await base.count(page,listBlockPage.block2+"/li/ol/li");
+  const countLiParentBlock2 = (await base.count(page,listBlockPage.block2+"/li")) - countLiChildBlock1;
+  // Compare 1
+  expect(block1Tag).toBe(block1ListGGdoc.tag);
+  expect(countLiParentBlock1).toBe(block1ListGGdoc.li.length);
+  expect(countLiChildBlock1).toBe(block1ListGGdoc.li[1].child.li.length);
+  // Compare 2
+  //expect(block1Tag).toBe(block1ListGGdoc.tag);
+  expect(countLiParentBlock2).toBe(block2ListGGdoc.li.length);
+  expect(countLiChildBlock2).toBe(block2ListGGdoc.li[1].child.li.length);
+
+});
+
+test('link', async ({ page }) => {
+  const fileId = (filesBoilerlate.filter(x => x.name === "link"))[0]["id"];
+  const content:any = await googleApi.getContentGGDoc(fileId);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  const block1H1GGDoc = convertGGdoc[0];
+  const block2PGGDoc = convertGGdoc[1];
+  const block3PictureGGDoc = convertGGdoc[1];
+  const block4PictureGGDoc = convertGGdoc[1];
+  const block5LinkGDoc = convertGGdoc[1];
+
+  await page.goto("/Block/Boilerplate/link");
+  
+});
+
 // test('icons', async ({ page }) => {
 
 // });
 
 // test('hero', async ({ page }) => {
-
-// });
-
-// test('link', async ({ page }) => {
-
-// });
-
-// test('list', async ({ page }) => {
 
 // });
 
