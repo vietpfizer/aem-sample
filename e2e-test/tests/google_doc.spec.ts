@@ -111,11 +111,15 @@ test('Verify the list formats of content in google doc should be respond the com
   const documentId = (filesStuff.filter(x => x.name === "list"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content_document);
-  const block1GGdoc = convertGGdoc[0];
-  const block2GGdoc = convertGGdoc[1];
+  const block1GGdoc = convertGGdoc[0].li[0];
+  const block2GGdoc = convertGGdoc[0].li[1];
   await page.goto('/list');
-  const listblockTag =  await base.getTagHtml(page,listPage.block1);
-  const contentlistblock =  await base.getText(page,listPage.block1);
-  expect(listblockTag).toBe(block1GGdoc.tag)
-  expect(contentlistblock).toBe(block1GGdoc.elements[0].content);
+  const li1Tag =  await base.getTagHtml(page,listPage.block1);
+  const contentLi1 =  await base.getText(page,listPage.block1);
+  const li2Tag =  await base.getTagHtml(page,listPage.block2);
+  const contentLi2 =  await base.getText(page,listPage.block2);
+  expect(li1Tag).toBe(block1GGdoc.tag)
+  expect(contentLi1).toBe(block1GGdoc.elements[0].content);
+  expect(li2Tag).toBe(block2GGdoc.tag)
+  expect(contentLi2).toBe(block2GGdoc.elements[0].content);
 });
