@@ -44,4 +44,18 @@ export default class Utilities {
     });
     return totp.generate();
   }
+
+  // Include Content
+  includeContent(elements){
+    let result ='';
+    for(let i=0; i< elements.length;i++){
+      result += elements[i].content;
+    }
+    return result;
+  }
+  
+  // Get Icon in string
+  getIconInStr(text:string){
+
+  }
 }
