@@ -144,8 +144,10 @@ loadPage().then(() => {
 
 function onClick() {
   const btn = document.querySelector('a');
-  btn.addEventListener('click', () => {
-    console.log(btn.textContent);
-  });
+  if(btn){
+    btn.addEventListener('click', () => {
+      console.log(btn.textContent);
+    });
+  }
 }
 const clickOnce = onClick();
