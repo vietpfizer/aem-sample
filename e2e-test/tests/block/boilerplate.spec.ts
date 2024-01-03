@@ -12,7 +12,7 @@ import TextPage from '@pom/block/boilerplate/TextPage';
 import CardsPage from '@pom/block/boilerplate/CardsPage';
 import ListPage from '@pom/ListPage';
 import PicturePage from "@pom/block/boilerplate/PicturePage";
-import SectionPage from "@pom/block/blockCollection/SectionPage";
+import SectionPage from "@pom/block/boilerplate/SectionPage";
 import CodePage from "@pom/block/boilerplate/CodePage";
 import ButtonPage from "@pom/block/boilerplate/ButtonPage";
 import MetaDataPage from "@pom/block/boilerplate/MetaDataPage";
@@ -23,6 +23,7 @@ import ListBlockPage from '@pom/block/boilerplate/ListPage';
 import LinkPage from "@pom/block/boilerplate/LinkPage";
 import SectionMetaDataPage from "@pom/block/boilerplate/SectionMetaDataPage";
 import IconPage from "@pom/block/boilerplate/IconsPage";
+import ColumnsPage from "@pom/block/boilerplate/ColumnsPage";
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
 const generatedCode = new GeneratedCode();
@@ -41,6 +42,7 @@ const headingPage = new HeadingsPage();
 const googlePage = new GooglePage();
 const sectionMetaPage = new SectionMetaDataPage();
 const iconsPage = new IconPage();
+const columnsPage = new ColumnsPage();
 
 async function checkTagExistInBlock(page,blockLocator,tag) {
   for(let i=0; i< tag.length;i++){
@@ -165,16 +167,6 @@ test('code', async ({ page }) => {
   expect(block2CodeText).toBe(code2GGdoc.elements[0].content);
 });
 
-test('columns', async ({ page }) => {
-  const fileId = (filesBoilerlate.filter(x => x.name === "columns"))[0]["id"];
-  const content:any = await googleApi.getContentGGDoc(fileId);
-  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const block1Columns = convertGGdoc[0];
-  const block2Columns = convertGGdoc[1];
-
-  await page.goto("/Block/boilerplate/colums");
-  
-});
 
 test('sections', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "sections"))[0]["id"];
@@ -463,6 +455,7 @@ test('icons', async ({ page }) => {
   const block2GGdoc = convertGGdoc[1];
   const block3GGdoc = convertGGdoc[2];
   const block4GGdoc = convertGGdoc[3];
+
   await page.goto("/Block/Boilerplate/icons");
   //block 1
   const block1H1Tag = await base.getTagHtml(page,iconsPage.block1H1);
@@ -471,17 +464,17 @@ test('icons', async ({ page }) => {
   // Compare 1
   expect(block1H1Tag).toBe(block1GGdoc.tag);
   expect(block1H1Text).toBe(utilities.includeContent(block1GGdoc.elements).replace(" :search:",""));
-  //expect(block1IconUrl).toBe("/icons/"++".svg")
+  expect(block1IconUrl).toBe("/icons/"+utilities.getIconInStr(block1GGdoc.elements[0].content)[0]+".svg")
   //block 2
   const block2Icon1Url = await base.getAttribute(page,iconsPage.block2P+"/span[1]/img[1]","src");
   const block2ATag = await base.getTagHtml(page,iconsPage.block2P+"/a[1]");
   const block2AText = await base.getText(page,iconsPage.block2P+"/a[1]");
   const block2Icon2Url = await base.getAttribute(page,iconsPage.block2P+"/a[1]/span[1]/img[1]","src");
   // Compare 2
-  //expect(block2Icon1Url).toBe("/icons/"++".svg")
+  expect(block2Icon1Url).toBe("/icons/"+utilities.getIconInStr(block2GGdoc.elements[0].content)[0]+".svg")
   expect(block2ATag).toBe(block2GGdoc.elements[1].textStyle.tag[0]);
   expect(block2AText).toBe(block2GGdoc.elements[1].content.replace(":search: ",""));
-  //expect(block2Icon2Url).toBe("/icons/"++".svg")
+  expect(block2Icon2Url).toBe("/icons/"+utilities.getIconInStr(block2GGdoc.elements[1].content)[0]+".svg")
   //block 3
   const block3ATag = await base.getTagHtml(page,iconsPage.block3P+"//a[1]");
   const block3AText = await base.getText(page,iconsPage.block3P+"//a[1]");
@@ -489,14 +482,29 @@ test('icons', async ({ page }) => {
   // Compare 3
   expect(block3ATag).toBe(block3GGdoc.elements[0].textStyle.tag[1]);
   expect(block3AText).toBe(block3GGdoc.elements[0].content.replace(":search: ",""));
-  //expect(block2Icon2Url).toBe("/icons/"++".svg")
+  expect(block2Icon2Url).toBe("/icons/"+utilities.getIconInStr(block3GGdoc.elements[0].content)[0]+".svg")
 });
 
-// test('hero', async ({ page }) => {
-//   const fileId = (filesBoilerlate.filter(x => x.name === "hero"))[0]["id"];
-//   const content:any = await googleApi.getContentGGDoc(fileId);
-//   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-// });
+test('columns', async ({ page }) => {
+  const fileId = (filesBoilerlate.filter(x => x.name === "columns"))[0]["id"];
+  const content:any = await googleApi.getContentGGDoc(fileId);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  const block1Columns = convertGGdoc[0];
+  const block2Columns = convertGGdoc[1];
+  await page.goto("/Block/boilerplate/columns");
+  //block 1
+  const countRowBlock1 = await base.count(page,columnsPage.block1+"/div");
+  // Compare 1
+  expect(countRowBlock1).toBe(block1Columns.row.length);
+});
+
+test('hero', async ({ page }) => {
+  const fileId = (filesBoilerlate.filter(x => x.name === "hero"))[0]["id"];
+  const content:any = await googleApi.getContentGGDoc(fileId);
+  const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+
+  await page.goto("/Block/boilerplate/hero");
+});
 
 
 

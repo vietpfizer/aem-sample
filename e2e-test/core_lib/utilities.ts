@@ -56,6 +56,19 @@ export default class Utilities {
   
   // Get Icon in string
   getIconInStr(text:string){
-
+    const arrIndex = new Array();
+    const arrIcon =new Array();
+    for(let i=0; i< text.length;i++){
+      if(text[i]==":"){
+        arrIndex.push(i);
+      }
+     }
+     const count = arrIndex.length;
+     if(count % 2 == 0){
+       if(count == 2){
+        arrIcon.push((text.substring(arrIndex[0],arrIndex[1])).replace(":",""));
+       }
+     }
+     return arrIcon;
   }
 }
