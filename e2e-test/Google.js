@@ -20,9 +20,7 @@ const oauth2Client = new google.auth.OAuth2(
 try {
   const creds = fs.readFileSync('creds.json');
   oauth2Client.setCredentials(JSON.parse(creds));
-} catch (err) {
-  console.log('No creds found');
-}
+} catch (err) {}
 
 const POST = process.env.POST || 8000;
 

@@ -8,6 +8,7 @@
     "web.headless": "npx playwright test --config=config/config.ts --ui",
     "web.debug": "npx playwright test --config=config/config.ts --debug",
     "web.report": "npx playwright test --config=config/config.ts && npx playwright show-report",
+    "google":"node Google.js",
     "report": "npx playwright show-report",
     "report.allure": "allure generate ./allure-results --clean && npx allure open ./allure-report/"
   },

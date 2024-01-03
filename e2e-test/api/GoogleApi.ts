@@ -12,9 +12,7 @@ export default class GoogleApi {
       try {
           const creds:any = fs.readFileSync('creds.json');
           oauth2Client.setCredentials(JSON.parse(creds));
-      } catch (err) {
-          console.log('No creds found');
-      }
+      } catch (err) {}
       return oauth2Client;
   }
 

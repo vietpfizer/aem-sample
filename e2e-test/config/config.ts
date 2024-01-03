@@ -2,7 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const browser = process.env.BROWSER || "chromium";
-let testFiles = process.env.FILE_RUN || "tests/*.spec.ts";
+let testFiles = process.env.TEST_FILES_WEB || "tests/*.spec.ts";
+const apiUrl = process.env.APP_URL || "https://main--aem-sample--vietpfizer.hlx.page";
 import { defineConfig, devices } from "@playwright/test";
 import Utilities from "@core_lib/utilities";
 //declare
@@ -87,7 +88,7 @@ export default defineConfig({
   reporter: [["html"], ["list"], ["allure-playwright"]],
   timeout: 5 * 60 * 1000,
   use: {
-    baseURL: "https://main--aem-sample--vietpfizer.hlx.page",
+    baseURL: apiUrl,
     trace: "on-first-retry",
     screenshot: "on",
     video: "on",
