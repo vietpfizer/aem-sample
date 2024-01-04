@@ -82,14 +82,24 @@ APP_URL=https://main--aem-sample--vietpfizer.hlx.page
 
 # Google information
 # Login google
-EMAILGG=gapi55814@gmail.com
-PASSGG=1qazxsw2@
-SECRETGG=465tsx4hy5x5a3jzdv5mdheklbik6dp5
+# get secretgg in link: https://myaccount.google.com/two-step-verification/authenticator
+# For example:
+#  EMAILGG= email@gmail.com
+#  PASSGG= password
+#  SECRETGG= secretgg
+EMAILGG=
+PASSGG=
+SECRETGG=
 
 # Google Api Information
-CLIENT_ID=543689332838-no088p7huuellfl1heun6efa0inejs1i.apps.googleusercontent.com
-CLIENT_SECRET=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
-REDIRECT_URI=http://localhost:8000/google/redirect
+# Link get information: https://console.cloud.google.com/apis/credentials?project=gg-goc
+# For example:
+#  CLIENT_ID= client id
+#  CLIENT_SECRET= client secret
+#  REDIRECT_URI= http://localhost:8000/google/redirect
+CLIENT_ID=
+CLIENT_SECRET=
+REDIRECT_URI=
 ```
 
 ## Run the test script

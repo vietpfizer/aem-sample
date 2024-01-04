@@ -24,6 +24,7 @@ import LinkPage from "@pom/block/boilerplate/LinkPage";
 import SectionMetaDataPage from "@pom/block/boilerplate/SectionMetaDataPage";
 import IconPage from "@pom/block/boilerplate/IconsPage";
 import ColumnsPage from "@pom/block/boilerplate/ColumnsPage";
+import HeroPage from "@pom/block/boilerplate/HeroPage";
 const googleApi= new GoogleApi();
 const utilities = new Utilities();
 const generatedCode = new GeneratedCode();
@@ -43,7 +44,7 @@ const googlePage = new GooglePage();
 const sectionMetaPage = new SectionMetaDataPage();
 const iconsPage = new IconPage();
 const columnsPage = new ColumnsPage();
-
+const heroPage = new HeroPage();
 async function checkTagExistInBlock(page,blockLocator,tag) {
   for(let i=0; i< tag.length;i++){
     expect(await base.isDisplayed(page,blockLocator+"//"+tag[i])).toBe(true);
@@ -62,8 +63,8 @@ test('text', async ({ page }) => {
     const content = await googleApi.getContentGGDoc(fileId);
     const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
 
-    const block1GGdoc = convertGGdoc[0];
-    const block2GGdoc = convertGGdoc[1];
+    const block1GGdoc = convertGGdoc[0].elements[0];
+    const block2GGdoc = convertGGdoc[0].elements[1];
 
     await page.goto("/Block/boilerplate/text");
     const blockTag1 =  await base.getTagHtml(page,textPage.block1);
@@ -124,11 +125,10 @@ test('images', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "images"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const pictureGGdoc = convertGGdoc.filter(x=>x.tag=="picture");
   
-  const picture1GGdoc = pictureGGdoc[0];
-  const picture2GGdoc = pictureGGdoc[1];
-  const picture3GGdoc = pictureGGdoc[2];
+  const picture1GGdoc = convertGGdoc[0].elements[0];
+  const picture2GGdoc = convertGGdoc[0].elements[1];
+  const picture3GGdoc = convertGGdoc[0].elements[2];
   await page.goto("/Block/boilerplate/images");
   // block 1
   const blockTagPicture1 =  await base.getTagHtml(page,picturePage.block1);
@@ -144,8 +144,8 @@ test('code', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "code"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const code1GGdoc = convertGGdoc[0];
-  const code2GGdoc = convertGGdoc[1];
+  const code1GGdoc = convertGGdoc[0].elements[0];
+  const code2GGdoc = convertGGdoc[0].elements[1];
   
   await page.goto("/Block/boilerplate/code");
   // block1
@@ -174,16 +174,16 @@ test('sections', async ({ page }) => {
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
   
   //section 1
-  const titleSection1GGdoc = convertGGdoc[0];
-  const contentsection1GGdoc = convertGGdoc[1];
+  const titleSection1GGdoc = convertGGdoc[0].elements[0];
+  const contentsection1GGdoc = convertGGdoc[0].elements[1];
 
   //section 2
-  const titleSection2GGdoc = convertGGdoc[3];
-  const contentsection2GGdoc = convertGGdoc[4];
+  const titleSection2GGdoc = convertGGdoc[1].elements[0];
+  const contentsection2GGdoc = convertGGdoc[1].elements[1];
 
   //section 3
-  const titleSection3GGdoc = convertGGdoc[6];
-  const contentsection3GGdoc = convertGGdoc[7];
+  const titleSection3GGdoc = convertGGdoc[2].elements[0];
+  const contentsection3GGdoc = convertGGdoc[2].elements[1];
 
   await page.goto("/Block/boilerplate/sections");
   // section page 1
@@ -227,15 +227,16 @@ test('button', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "button"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  
 
   //button 1
-  const button1GGdoc = convertGGdoc[0];
+  const button1GGdoc = convertGGdoc[0].elements[0];
   //button 2
-  const button2GGdoc = convertGGdoc[1];
+  const button2GGdoc = convertGGdoc[0].elements[1];
   //button 3
-  const button3GGdoc = convertGGdoc[2];
+  const button3GGdoc = convertGGdoc[0].elements[2];
   //button 4
-  const button4GGdoc = convertGGdoc[3];
+  const button4GGdoc = convertGGdoc[0].elements[3];
 
   await page.goto("/Block/boilerplate/button");
 
@@ -295,12 +296,13 @@ test('headings', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "headings"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const h1GGdoc =convertGGdoc[0];
-  const h2GGdoc =convertGGdoc[1];
-  const h3GGdoc =convertGGdoc[2];
-  const h4GGdoc =convertGGdoc[3];
-  const h5GGdoc =convertGGdoc[4];
-  const h6GGdoc =convertGGdoc[5];
+  
+  const h1GGdoc =convertGGdoc[0].elements[0];
+  const h2GGdoc =convertGGdoc[0].elements[1];
+  const h3GGdoc =convertGGdoc[0].elements[2];
+  const h4GGdoc =convertGGdoc[0].elements[3];
+  const h5GGdoc =convertGGdoc[0].elements[4];
+  const h6GGdoc =convertGGdoc[0].elements[5];
   await page.goto("/Block/Boilerplate/headings");
   const h1Tag =  await base.getTagHtml(page,headingPage.h1);
   const h1Text =  await base.getText(page,headingPage.h1);
@@ -344,8 +346,9 @@ test('list', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "list"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const block1ListGGdoc = convertGGdoc[0];
-  const block2ListGGdoc = convertGGdoc[1];
+  
+  const block1ListGGdoc = convertGGdoc[0].elements[0];
+  const block2ListGGdoc = convertGGdoc[0].elements[1];
 
   await page.goto("/Block/Boilerplate/list");
   const block1Tag = await base.getTagHtml(page,listBlockPage.block1);
@@ -370,11 +373,12 @@ test('link', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "link"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const block1H1GGDoc = convertGGdoc[0];
-  const block2PGGDoc = convertGGdoc[1];
-  const block3PictureGGDoc = convertGGdoc[2];
-  const block4PictureGGDoc = convertGGdoc[4];
-  const block5LinkGDoc = convertGGdoc[5];
+  
+  const block1H1GGDoc = convertGGdoc[0].elements[0];
+  const block2PGGDoc = convertGGdoc[0].elements[1];
+  const block3PictureGGDoc = convertGGdoc[0].elements[2];
+  const block4PictureGGDoc = convertGGdoc[0].elements[4];
+  const block5LinkGDoc = convertGGdoc[0].elements[5];
  
   await page.goto("/Block/Boilerplate/link");
   //block 1
@@ -419,10 +423,11 @@ test('setion-metadata', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "setion-metadata"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const section1H1GGdoc = await convertGGdoc[0];
-  const section1PGGdoc = await convertGGdoc[1];
-  const section2H2GGdoc = await convertGGdoc[3];
-  const section2PGGdoc = await convertGGdoc[4];
+  
+  const section1H1GGdoc = await convertGGdoc[0].elements[0];
+  const section1PGGdoc = await convertGGdoc[0].elements[1];
+  const section2H2GGdoc = await convertGGdoc[1].elements[0];
+  const section2PGGdoc = await convertGGdoc[1].elements[1];
   await page.goto("/Block/Boilerplate/setion-metadata");
   //section 1
   const section1H1 = await base.getTagHtml(page,sectionMetaPage.section1+"/h1");
@@ -451,10 +456,11 @@ test('icons', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "icons"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-  const block1GGdoc = convertGGdoc[0];
-  const block2GGdoc = convertGGdoc[1];
-  const block3GGdoc = convertGGdoc[2];
-  const block4GGdoc = convertGGdoc[3];
+  
+  const block1GGdoc = convertGGdoc[0].elements[0];
+  const block2GGdoc = convertGGdoc[0].elements[1];
+  const block3GGdoc = convertGGdoc[0].elements[2];
+  const block4GGdoc = convertGGdoc[0].elements[3];
 
   await page.goto("/Block/Boilerplate/icons");
   //block 1
@@ -489,6 +495,7 @@ test('columns', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "columns"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
+  
   const block1Columns = convertGGdoc[0];
   const block2Columns = convertGGdoc[1];
   await page.goto("/Block/boilerplate/columns");
@@ -496,14 +503,40 @@ test('columns', async ({ page }) => {
   const countRowBlock1 = await base.count(page,columnsPage.block1+"/div");
   // Compare 1
   expect(countRowBlock1).toBe(block1Columns.row.length);
+  //block 2
+  const countRowBlock2 = await base.count(page,columnsPage.block2+"/div");
+  const countCellBlock2 = await base.count(page,columnsPage.block2+"/div[1]/div");
+  // Compare 2
+  expect(countRowBlock2).toBe(block2Columns.row.length);
+  expect(countCellBlock2).toBe(block2Columns.row[0].cell.length);
+
 });
 
 test('hero', async ({ page }) => {
   const fileId = (filesBoilerlate.filter(x => x.name === "hero"))[0]["id"];
   const content:any = await googleApi.getContentGGDoc(fileId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content);
-
+  const block1GGdoc = convertGGdoc[0];
+  const block2GGdoc = convertGGdoc[1];
   await page.goto("/Block/boilerplate/hero");
+  // block 1
+  const pictureTagBlock1 = await base.getTagHtml(page,heroPage.block1+"/picture");
+  const h1Block1Tag = await base.getTagHtml(page,heroPage.block1+"/h1");
+  const h1Block1Text = await base.getText(page,heroPage.block1+"/h1");
+  // compare 1
+  expect(pictureTagBlock1).toBe(block1GGdoc.elements[0].tag);
+  expect(h1Block1Tag).toBe(block1GGdoc.elements[1].tag);
+  expect(h1Block1Text).toBe(block1GGdoc.elements[1].elements[0].content);
+
+   // block 2
+   const pictureTagBlock2 = await base.getTagHtml(page,heroPage.block2+"//picture");
+   const h1Block2Tag = await base.getTagHtml(page,heroPage.block2+"/h1");
+   const h1Block2Text = await base.getText(page,heroPage.block2+"/h1");
+  //compare 2
+  expect(pictureTagBlock2).toBe(block2GGdoc.elements[0].tag);
+  expect(h1Block2Tag).toBe(block2GGdoc.elements[1].tag);
+  expect(h1Block2Text).toBe(block2GGdoc.elements[1].elements[0].content);
+  
 });
 
 

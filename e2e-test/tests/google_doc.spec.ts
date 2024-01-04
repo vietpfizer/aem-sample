@@ -84,8 +84,8 @@ test('Use the extracted content with formatting to compare the components on AEM
   const documentId = (filesStuff.filter(x => x.name === "text"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content_document);
-  const block1GGdoc = convertGGdoc[0];
-  const block2GGdoc = convertGGdoc[1];
+  const block1GGdoc = convertGGdoc[0].elements[0];
+  const block2GGdoc = convertGGdoc[0].elements[1];
   
   // get block page
   await page.goto('/text');
@@ -111,8 +111,9 @@ test('Verify the list formats of content in google doc should be respond the com
   const documentId = (filesStuff.filter(x => x.name === "list"))[0]["id"];
   const content_document = await googleApi.getContentGGDoc(documentId);
   const convertGGdoc = await generatedCode.generateCodeFromGoogleDoc(content_document);
-  const block1GGdoc = convertGGdoc[0].li[0];
-  const block2GGdoc = convertGGdoc[0].li[1];
+  
+  const block1GGdoc = convertGGdoc[0].elements[0].li[0];
+  const block2GGdoc = convertGGdoc[0].elements[0].li[1];
   await page.goto('/list');
   const li1Tag =  await base.getTagHtml(page,listPage.block1);
   const contentLi1 =  await base.getText(page,listPage.block1);

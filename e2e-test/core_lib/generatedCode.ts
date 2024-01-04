@@ -6,6 +6,7 @@ import TableTag from './block/TableTag';
 import EmbedTag from './block/EmbedTag';
 import ColumnTag from './block/ColumnTag';
 import MetaDataTag from './block/MetaDataTag';
+import HeroTag from './block/HeroTag';
 const tag = new Tag();
 const textTag = new TextTag();
 const cardTag = new CardTag();
@@ -13,6 +14,7 @@ const tableTag = new TableTag();
 const embedTag = new EmbedTag();
 const columnTag = new ColumnTag();
 const metaDataTag = new MetaDataTag();
+const heroTag = new HeroTag();
 export default class GeneratedCode {
   // generate code from google doc
   generateCodeFromGoogleDoc(doc){
@@ -82,10 +84,14 @@ export default class GeneratedCode {
             elements: metaDataTag.convertToMetaData(table.tableRows)
           })
         }
+        else if(tableType=="Hero\n"){
+          result.push({
+            tag:'div',
+            elements: heroTag.convertToHero(table.tableRows)
+          })
+        }
       }
-    }
-    //
-  
+    }//
     return this.summaryTag(result);
   }
   
@@ -132,6 +138,33 @@ export default class GeneratedCode {
         content="";
         result[index] = convertDoc[i];
         index ++;
+      }
+    }
+    result = this.section(result);
+    return result;
+  }
+  //section
+  section(content){
+    const result = new Array();
+    let index = 0; 
+    let arr =new Array();
+    for(let i=0; i < content.length;i++){
+      if(content[i].tag =="div" || content[i].tag =='table' || content[i].tag =='head'){
+        result[index]=content[i];
+        index++;
+      }
+      else{
+        if(content[i].tag =="p" && (content[i].elements[0].content =="" || content[i].elements[0].content =="---") ){
+          result[index]= { tag: 'div', elements: arr };
+          arr = new Array();
+          index++;
+        }
+        else{
+          arr.push(content[i]);
+          if(arr && i == (content.length-1)){
+            result[index]= { tag: 'div', elements: arr };
+          }
+        }
       }
     }
     return result;
