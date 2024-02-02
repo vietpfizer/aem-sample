@@ -1,9 +1,20 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-
+import { SmartcaptureTags } from '../../scripts/pfizer-utilities.js';
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
-
+function setupSmartcaptureTags() {
+  SmartcaptureTags([{
+    selector: 'li.nav-drop  a',
+    smName: 'menu-link',
+    event: 'click',
+  }, {
+    selector: 'li.nav-drop, .nav-hamburger button',
+    smName: 'menu',
+    event: 'click',
+  },
+  ]);
+}
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -144,5 +155,6 @@ export default async function decorate(block) {
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
+  setupSmartcaptureTags();
   block.append(navWrapper);
 }
